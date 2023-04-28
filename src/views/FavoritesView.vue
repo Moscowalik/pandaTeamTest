@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <h1 class="favorites__title">Favorites List</h1>
         <div class="cities__list">
             <Suspense>
                 <FavoritesList />
@@ -47,5 +48,20 @@ const router = useRouter();
     gap: 30px;
     margin-top: 30px;
     margin-bottom: 30px;
+}
+
+.favorites__title {
+    font-family: $main-font;
+    font-weight: 600;
+    font-size: 18px;
+    color: #7284FF;
+    text-align: center;
+    width: 100%;
+    margin-top: 30px;
+
+    @media (min-width: 600px) {
+        font-size: 28px;
+    }
+
 }
 </style>

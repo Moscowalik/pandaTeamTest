@@ -7,6 +7,9 @@
             <CityCardSkeleton />
         </template>
     </Suspense>
+    <div class="text" v-if="favoritesCities.length === 0">
+        you have not added any city yet &#9785;
+    </div>
 </template>
 
 <script setup>
@@ -68,4 +71,21 @@ const goToCityView = (city) => {
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+@import '../assets/variables';
+
+.text {
+    font-family: $main-font;
+    font-weight: 400;
+    font-size: 15px;
+    color: black;
+    text-align: center;
+    width: 100%;
+    margin-top: 30px;
+
+    @media (min-width: 600px) {
+        font-size: 20px;
+    }
+
+}
+</style>

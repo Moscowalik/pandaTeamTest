@@ -15,13 +15,7 @@
             </svg>
           </div>
         </RouterLink>
-        <Suspense>
-          <div @click="addCity" class="navigation__icon" v-if="route.path !== '/' && route.path !== '/favorites'">
-            <svg class="icon-plus" height="19" width="19">
-              <use href="../assets/symbol-defs.svg#icon-plus"></use>
-            </svg>
-          </div>
-        </Suspense>
+
       </div>
     </nav>
   </header>
@@ -29,66 +23,15 @@
 
 <script setup>
 import { RouterLink, useRoute, useRouter } from "vue-router";
-import { uid } from "uid";
+
 import { onMounted, ref } from "vue";
 import BaseModal from "./BaseModal.vue";
 import FavoritesView from "../views/FavoritesView.vue";
 
-const isCity = ref(true)
-const favoritesCities = ref([])
+
 const route = useRoute();
 const router = useRouter();
 
-
-const addCity = () => {
-  if (localStorage.getItem("favoritesCities")) {
-    favoritesCities.value = JSON.parse(
-      localStorage.getItem("favoritesCities")
-    );
-  }
-
-  if (favoritesCities.value.length >= 5) {
-    alert('you cannot save more than five objects. Delete some of them')
-    return
-  }
-
-  if (favoritesCities.value !== 0) {
-    const city = favoritesCities.value.some((city) => {
-      console.log(city.city)
-      console.log(route.params.city)
-      return city.city == route.params.city
-    })
-    if (city) {
-      alert('This city is already in the favorites')
-      return
-    }
-  }
-
-
-
-
-  const locationObj = {
-    id: uid(),
-    state: route.params.state,
-    city: route.params.city,
-    coords: {
-      lat: route.query.lat,
-      lng: route.query.lng,
-    },
-  };
-
-  favoritesCities.value.push(locationObj);
-  localStorage.setItem(
-    "favoritesCities",
-    JSON.stringify(favoritesCities.value)
-  );
-
-  let query = Object.assign({}, route.query);
-  delete query.preview;
-  query.id = locationObj.id;
-  router.replace({ query });
-  isCity.value = false
-};
 </script>
 
 <style lang="scss" scoped>

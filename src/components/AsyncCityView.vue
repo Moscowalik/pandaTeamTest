@@ -1,12 +1,22 @@
 <template>
   <div class="weather__container">
     <div class="">
-      <p v-if="isCity" class="banner-text">
-        Click the "+" icon to add this city for favorites.
-      </p>
-      <p v-else class="banner-text">
-        This city in you favorites
-      </p>
+      <div class="banner__block" v-if="isCity">
+        <p class="banner-text">
+          Click the "+" icon to add this city for favorites.
+        </p>
+        <div @click="addCity" class="banner__icon" v-if="route.path !== '/' && route.path !== '/favorites'">
+          <svg class="icon-plus" height="19" width="19">
+            <use href="../assets/symbol-defs.svg#icon-plus"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="banner__block" v-else>
+        <p class="banner-text">
+          This city in you favorites
+        </p>
+      </div>
+
     </div>
     <div class="weather__today">
       <h1 class="weather__today-title">{{ route.params.city }}</h1>
@@ -95,6 +105,7 @@
 </template>
 
 <script setup>
+import { uid } from "uid";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import Chart from 'chart.js/auto';
@@ -273,6 +284,58 @@ const toggleModal = () => {
   modalActive.value = !modalActive.value;
 };
 
+
+
+const addCity = () => {
+  if (localStorage.getItem("favoritesCities")) {
+    favoritesCities.value = JSON.parse(
+      localStorage.getItem("favoritesCities")
+    );
+  }
+
+  if (favoritesCities.value.length >= 5) {
+    alert('you cannot save more than five objects. Delete some of them')
+    return
+  }
+
+  if (favoritesCities.value !== 0) {
+    const city = favoritesCities.value.some((city) => {
+      console.log(city.city)
+      console.log(route.params.city)
+      return city.city == route.params.city
+    })
+    if (city) {
+      alert('This city is already in the favorites')
+      return
+    }
+  }
+
+
+
+
+  const locationObj = {
+    id: uid(),
+    state: route.params.state,
+    city: route.params.city,
+    coords: {
+      lat: route.query.lat,
+      lng: route.query.lng,
+    },
+  };
+
+  favoritesCities.value.push(locationObj);
+  localStorage.setItem(
+    "favoritesCities",
+    JSON.stringify(favoritesCities.value)
+  );
+
+  let query = Object.assign({}, route.query);
+  delete query.preview;
+  query.id = locationObj.id;
+  router.replace({ query });
+  isFavoritesCity()
+};
+
 </script>
 
 <style lang="scss" scoped>
@@ -438,12 +501,32 @@ const toggleModal = () => {
 }
 
 .banner-text {
-  margin-top: 30px;
   font-family: $main-font;
   font-weight: 600;
   font-size: 15px;
   color: #7284FF;
   text-align: center;
   width: 100%;
+}
+
+.banner__block {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.banner__icon {
+  border-radius: 50%;
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  background: #D7D8F0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #7284FF;
+  }
 }
 </style>

@@ -37,17 +37,23 @@ let timesofDay = 'is-night';
 
 
 const getCurrentTime = () => {
-  const dateObject = new Date();
-  const currentTime = dateObject.getHours();
-  const sunrise = new Date(props.city.weather.sys.sunrise * 1000).getHours();
-  const sunset = new Date(props.city.weather.sys.sunset * 1000).getHours();
-  if (currentTime > sunrise && currentTime < sunset) {
+
+  const localOffset = new Date().getTimezoneOffset() * 60000;
+  const utc = props.city.weather.dt * 1000 + localOffset;
+  const currentTime = new Date(utc + 1000 * props.city.weather.timezone).getHours();
+
+  if (currentTime > 5 && currentTime < 20) {
+
     timesofDay = 'is-day';
   }
 }
 
+if (props.city) {
+  getCurrentTime()
+}
 
-getCurrentTime()
+
+
 
 
 
